@@ -72,8 +72,7 @@ def show_(message):
     vid = message
     if vid in todos:
         tasks = ''
-        for task in todos[date]:
-            tasks += f'[ ] {task}\n'
+        tasks += f'[ ] {task}\n'
     else:
         tasks = 'Такой даты нет'
     bot.send_message(message.chat.id, tasks)
