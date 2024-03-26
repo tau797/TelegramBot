@@ -32,7 +32,6 @@ def add_todo(date, task):
     else:
         todos[date] = [task]
 
-
 # добавляем реакцию бота на команду 'help'
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -55,11 +54,23 @@ def add(message):
     add_todo(date, task)
     bot.send_message(message.chat.id, f'Задача {task} добавлена на дату {date}')
 
-# добавляем реакцию бота на команду 'show'
-@bot.message_handler(commands=['show'])
+# добавляем реакцию бота на команду 'print'
+@bot.message_handler(commands=['print'])
 def print_(message):
     date = message.text.split()[1].lower()
     if date in todos:
+        tasks = ''
+        for task in todos[date]:
+            tasks += f'{task}\n'
+    else:
+        tasks = 'Такой даты нет'
+    bot.send_message(message.chat.id, tasks)
+
+# добавляем реакцию бота на команду 'show'
+@bot.message_handler(commands=['show'])
+def show_(message):
+    vid = message
+    if vid in todos:
         tasks = ''
         for task in todos[date]:
             tasks += f'[ ] {task}\n'
