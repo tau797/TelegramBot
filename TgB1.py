@@ -13,7 +13,7 @@ bot = tb.TeleBot(token)
 @bot.message_handler(content_types=["text"])
 def echo(message):
     bot.send_message(message.chat.id, message.text)
-    if (hoz in message.text) bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
+    if (hoz in message.text): bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
 
 # постоянно обращается к серверам ТГ, none stop - не обращать внимание на ошибки!
 bot.polling(none_stop=True)
