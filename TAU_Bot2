@@ -74,7 +74,7 @@ def show_(message):
         tasks = ''
         tasks += f'[ ] {task}\n'
     else:
-        tasks = 'Такой даты нет'
+        tasks = 'Подобные задачи не найдены'
     bot.send_message(message.chat.id, tasks)
 
 
