@@ -10,4 +10,5 @@ bot = tb.TeleBot(token)
 def echo(message):
     bot.send_message(message.chat.id, message.text)
 
+# постоянно обращается к серверам ТГ, none stop - не обращать внимание на ошибки!
 bot.polling(none_stop=True)
