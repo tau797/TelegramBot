@@ -137,7 +137,7 @@ def show_(message):
     if len(message.text)==0:
         vid=' '
     else:
-      if '@' in message.text:
+      if tg in message.text:
         ll = '-'
         vid = message.text.split(tg)[1].lower()
 
@@ -147,7 +147,7 @@ def show_(message):
             if (vid in str(el)):
               ll += str(date)+': '+str(el)+'\n'
       else:
-        ll = 'Укажите вид задачи после @'
+        ll = 'Укажите вид задачи после '+tg
 
     bot.send_message(message.chat.id, ll)
 
