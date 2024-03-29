@@ -29,8 +29,8 @@ HELP = '''
 
 /все -  показать все имеющиеся задачи
 
-/вид - показать задачи выбранного вида
-например: '/что #дом'
+/по - показать задачи выбранного вида
+например: '/по #дом'
 
 /еще - добавить задачу
 например:
@@ -99,7 +99,7 @@ def add(message):
     print(date,tail)
 
     task = ' '.join([tail])
-    print (task)
+    #print (task)
     add_todo(date, task)
     bot.send_message(message.chat.id, 'Задача добавлена!')
 
@@ -132,7 +132,7 @@ def all_(message):
 
 
 # добавляем реакцию бота на команду 'show'
-@bot.message_handler(commands=['show','что','вид'])
+@bot.message_handler(commands=['show','по','вид'])
 def show_(message):
     if len(message.text)==0:
         vid=' '
