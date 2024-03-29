@@ -7,7 +7,7 @@ token = '6886566042:AAGlHIz56IneBdd-G_QKHTmlYZ2fOxBSBOA'
 # #моё имя Андрей
 # hoz = 'Андрей'
 
-#Создание бота 
+#Создание бота
 bot = tb.TeleBot(token)
 
 RANDOM_TASKS = ["Написать книгу @работа", "Написать Телеграм-бота @работа", "Починить машину @авто"]
@@ -20,9 +20,10 @@ HELP = '''
 * all -  показать все имеющиеся задачи
 * show - показать задачи выбранного рода
 * add - добавить задачу
+например: /add сегодня совершить подвиг
 * random - добавить на сегодня случайную задачу
 * help - Напечатать help
-Вы можете указать род задачи после тега '@', например 
+Вы можете указать род задачи после тега '@', например
   /add сегодня написать статью @работа...
 '''
 
@@ -73,25 +74,25 @@ def print_(message):
 @bot.message_handler(commands=['all'])
 def all_(message):
     #показываем все
-    ll = ""
-    for date,task in todos.items():  
+    ll = " "
+    for date,task in todos.items():
           ll += str(date)+': '+str(task)+'\n'
     bot.send_message(message.chat.id, ll)
-    
+
 
 # добавляем реакцию бота на команду 'show'
 @bot.message_handler(commands=['show'])
 def show_(message):
     if '@' in message.text:
-      ll = '-' 
+      ll = '-'
       vid = message.text.split('@')[1].lower()
-      
+
       for date,task in todos.items():
-        for el in task:  
+        for el in task:
           if (vid in str(el)):
             ll += str(date)+': '+str(el)+'\n'
-    else: 
-      ll = 'Укажите вид задачи после @' 
+    else:
+      ll = 'Укажите вид задачи после @'
     bot.send_message(message.chat.id, ll)
 
 
