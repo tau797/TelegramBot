@@ -7,19 +7,25 @@ token = '6886566042:AAGlHIz56IneBdd-G_QKHTmlYZ2fOxBSBOA'
 # #моё имя Андрей
 # hoz = 'Андрей'
 
-#Создание бота 
+#Создание бота
 bot = tb.TeleBot(token)
 
-RANDOM_TASKS = ["Написать книгу", "Написать Телеграм-бота", "Починить машину"]
+RANDOM_TASKS = ["Написать книгу @работа", "Написать Телеграм-бота @работа", "Починить машину @авто"]
 
 todos = dict()
 
 HELP = '''
 Список доступных команд:
-* show - напечать все задачи на заданную дату
-* add - добавить задачу
+* покажь - напечать все задачи на заданную дату
+* все -  показать все имеющиеся задачи
+* что - показать задачи выбранного рода
+например: /что @дом
+* еще - добавить задачу
+например: /еще сегодня совершить подвиг
 * random - добавить на сегодня случайную задачу
 * help - Напечатать help
+Вы можете указать род задачи после тега '@', например
+  /еще сегодня написать статью @работа...
 '''
 
 # добавление задачи на дату
@@ -29,7 +35,6 @@ def add_todo(date, task):
         todos[date].append(task)
     else:
         todos[date] = [task]
-
 
 # добавляем реакцию бота на команду 'help'
 @bot.message_handler(commands=['help'])
@@ -46,24 +51,128 @@ def random(message):
 
 
 # добавляем реакцию бота на команду 'add'
-@bot.message_handler(commands=['add'])
+@bot.message_handler(commands=['add','еще'])
 def add(message):
     _, date, tail = message.text.split(maxsplit=2)
     task = ' '.join([tail])
     add_todo(date, task)
     bot.send_message(message.chat.id, f'Задача {task} добавлена на дату {date}')
 
-# добавляем реакцию бота на команду 'show'
-@bot.message_handler(commands=['show'])
+# добавляем реакцию бота на команду 'print'
+@bot.message_handler(commands=['print','покажь'])
 def print_(message):
     date = message.text.split()[1].lower()
     if date in todos:
         tasks = ''
         for task in todos[date]:
-            tasks += f'[ ] {task}\n'
+            #tasks += f'[ ] {task}\n'
+            tasks += (task+'\n')
     else:
-        tasks = 'Такой даты нет'
+        tasks = 'На этот день ничего не найдено'
     bot.send_message(message.chat.id, tasks)
+
+# добавляем реакцию бота на команду 'all'
+@bot.message_handler(commands=['all','все'])
+def all_(message):
+    #показываем все
+    ll = " "
+    for date,task in todos.items():
+          ll += str(date)+': '+str(task)+'\n'
+    bot.send_message(message.chat.id, ll)
+
+
+# добавляем реакцию бота на команду 'show'
+@bot.message_handler(commands=['show','что'])
+def show_(message):
+    if '@' in message.text:
+      ll = '-'
+      vid = message.text.split('@')[1].lower()
+
+      for date,task in todos.items():
+        for el in task:
+          if (vid in str(el)):
+            ll += str(date)+': '+str(el)+'\n'
+    else:
+      ll = 'Укажите вид задачи после @'
+    bot.send_message(message.chat.id, ll)
 
 
 bot.polling(none_stop=True)
+
+# # Что сделать - ведение списка задач
+
+# # нужны случайные числа
+# import random
+
+# HELP = """
+# help - напечатать справку по программе
+# add - добавить задачу в список (название задачи запрашиваем у пользователя)
+# show - напечатать все добавленные задачи
+# random - добавить случайную задачу на сегодня
+# """
+
+# RANDOM_TASKS = ["Написать книгу", "Написать Телеграм-бота", "Починить машину"]
+
+# tasks = { }
+
+# # Сегодня, Завтра, 31.12 ...
+# # [Задача1, Задача2, Задача3]
+# # Дата -> [Задача1, Задача2, Задача3]
+
+# run = True
+
+# def add_todo(date, task):
+#   if date in tasks:
+#       # Дата есть в словаре
+#       # Добавляем в список задачу
+#       tasks[date].append(task)
+#   else:
+#       # Даты в словаре нет
+#       # Создаем запись с ключом date
+#       tasks[date] = []
+#       tasks[date].append(task)
+#   print("Задача ", task, " добавлена на дату ", date)
+
+# while run:
+#   command = input("Введите команду> ")
+#   if command == "help":
+#     print(HELP)
+#   elif command == "show":
+#     date = input("Введите дату для отображения списка задач: ")
+#     if date in tasks:
+#       for task in tasks[date]:
+#         print('- ', task)
+#     else:
+#       print("Такой даты нет")
+#   elif command == "add":
+#     date = input("Введите дату для добавления задачи: ")
+#     task = input("Введите название задачи: ")
+#     add_todo(date, task)
+#   elif command == "random":
+#     task = random.choice(RANDOM_TASKS)
+#     add_todo("Сегодня", task)
+#   else:
+#     print("Неизвестная команда")
+#     break
+
+# print("До свидания!")
+
+# подключаем библиотеку Телебот
+# import telebot as tb
+
+# # объявляем токен Телеграм-бота
+# token = '6886566042:AAGlHIz56IneBdd-G_QKHTmlYZ2fOxBSBOA'
+
+# #моё имя Андрей
+# hoz = 'Андрей'
+
+# #Создание бота
+# bot = tb.TeleBot(token)
+
+# @bot.message_handler(content_types=["text"])
+# def echo(message):
+#     bot.send_message(message.chat.id, message.text)
+#     if (hoz in message.text): bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
+
+# # постоянно обращается к серверам ТГ, none stop - не обращать внимание на ошибки!
+# bot.polling(none_stop=True)
