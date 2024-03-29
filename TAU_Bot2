@@ -1,6 +1,7 @@
 # Библиотеки
 from random import choice
 import telebot as tb
+from telebot import types
 
 token = '6886566042:AAGlHIz56IneBdd-G_QKHTmlYZ2fOxBSBOA'
 
@@ -11,8 +12,14 @@ hoz = 'Андрей'
 bot = tb.TeleBot(token)
 
 
-# @bot.message_handler(content_types=["text"])
-# def echo(message):
+@bot.message_handler(commands=['start'])
+def privet(message):
+    markup = types.ReplyKeyboardMarkup()
+    k1 = types.KeyboardButton('/помоги')
+    k2 = types.KeyboardButton('/random')
+    k3 = types.KeyboardButton('/все')
+    markup.row(k1, k2, k3)
+    bot.send_message(message.chat.id, f'<i>Приветствую, <b>{message.from_user.first_name}</b></i>',parse_mode='html',reply_markup=markup)
 #       bot.send_message(message.chat.id, "Как Вас зовут? Чтобы узнать возможности, пиши /help")
 #       if (hoz in message.text):
 #           bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
@@ -24,19 +31,26 @@ todos = dict()
 
 HELP = '''
 Список доступных команд:
-* покажи - напечать все задачи на заданную дату
-например /покажи сегодня или /покажь 29.03
-* все -  показать все имеющиеся задачи
-* что - показать задачи выбранного рода
-например: /что @дом
-* еще - добавить задачу
-например: /еще сегодня совершить подвиг
-* random - добавить на сегодня случайную задачу
-* help - Напечатать help
+/покажи - напечать все задачи на заданную дату
+например:
+'/покажи сегодня' или '/покажь 29.03'
+
+/все -  показать все имеющиеся задачи
+
+/что - показать задачи выбранного вида
+например: '/что @дом'
+
+/еще - добавить задачу
+например:
+'/еще сегодня совершить подвиг'
 Вы можете указать род задачи после тега '@', например
   /еще сегодня написать статью @работа...
-'''
 
+/random - добавить на сегодня случайную задачу
+
+/help - эта  подсказка
+
+'''
 
 # добавление задачи на дату
 def add_todo(date, task):
@@ -70,7 +84,6 @@ def add(message):
 
     _, date, tail = message.text.split(maxsplit=2)
     print(date,tail)
-
 
     task = ' '.join([tail])
 
