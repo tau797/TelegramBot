@@ -96,7 +96,7 @@ def add(message):
         bot.send_message(message.chat.id, 'нужно указать дату и задачу')
         return
     _, date, tail = message.text.split(maxsplit=2)
-    print(date,tail)
+    #print(date,tail)
 
     task = ' '.join([tail])
     #print (task)
