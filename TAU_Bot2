@@ -37,14 +37,15 @@ HELP = '''
 
 /все -  показать все имеющиеся задачи
 
-/что - показать задачи выбранного вида
+/вид - показать задачи выбранного вида
 например: '/что @дом'
 
 /еще - добавить задачу
 например:
 '/еще сегодня совершить подвиг'
+
 Вы можете указать род задачи после тега '@', например
-  /еще сегодня написать статью @работа...
+'/еще сегодня написать статью @работа...'
 
 /random - добавить на сегодня случайную задачу
 
@@ -116,26 +117,3 @@ def all_(message):
     for date,task in todos.items():
           ll += str(date)+': '+str(task)+'\n'
     bot.send_message(message.chat.id, ll)
-
-
-# добавляем реакцию бота на команду 'show'
-@bot.message_handler(commands=['show','что'])
-def show_(message):
-    if len(message.text)==0:
-        vid=' '
-    else:
-      if '@' in message.text:
-        ll = '-'
-        vid = message.text.split('@')[1].lower()
-
-        for date,task in todos.items():
-          for el in task:
-            print(task)
-            if (vid in str(el)):
-              ll += str(date)+': '+str(el)+'\n'
-      else:
-        ll = 'Укажите вид задачи после @'
-
-    bot.send_message(message.chat.id, ll)
-
-bot.polling(none_stop=True)
