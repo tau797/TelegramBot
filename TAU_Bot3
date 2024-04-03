@@ -1,8 +1,3 @@
-# Третья версия бота - с диалогом и хранением списка дел в файле 
-
-#в случае необходимости устанавливаем пакет
-#!pip install telebot
-
 # Библиотеки
 from random import choice
 import telebot as tb
@@ -61,11 +56,12 @@ def privet(message):
     markup.row(k1, k2, k3)
     bot.send_message(message.chat.id, f'<i>Приветствую, <b>{message.from_user.first_name}</b></i>',parse_mode='html',reply_markup=markup)
 
-    add_todo('сегодня', 'изучить бота TAU!') # шутка
+    #add_todo('сегодня', 'изучить бота TAU!') # шутка
     #xbnftv из файла что было
     try: 
-           file = open(FILE, 'r') 
-           file.read(todos)
+           file = open(FILE, 'rt') 
+           sm = file.read()
+           todos = eval(sm) 
            file.close() 
     except: 
            print("Не могу открыть файл!")
@@ -81,19 +77,19 @@ def add_todo(date, task):
     date = date.lower()
     if todos.get(date) is not None:
       if not task in todos[date]: #добавляем ежели не дубль
-        todos[date].append(task)
-        return f'Задача {task} на дату {date}'
+        todos[date].append(task)        
       else:
         return f'Задача {task} уже была запланирована на {date}'
     else:
         todos[date] = [task]
-        #и сохраняем перманентно
-        try: 
-           geeky_file = open(FILE, 'a') 
-           geeky_file.write(str(todos)) 
-           geeky_file.close() 
-        except: 
-           print("Не могу дописать в файл!") 
+    #и сохраняем перманентно
+    try: 
+           file = open(FILE, 'wt') 
+           file.write(str(todos)) 
+           file.close() 
+    except: 
+           print("Не могу дописать в файл!")
+    return f'Задача {task} запланирована на {date}'        
 
 # добавляем реакцию бота на команду 'help'
 @bot.message_handler(commands=['help','помоги'])
