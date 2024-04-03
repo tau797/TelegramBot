@@ -1,3 +1,9 @@
+# Телеграм-бот, ведущий список задач
+# (C) TAU март 2024
+
+#если нужно, устанавливаем библиотеку
+#!pip install telebot
+
 # Библиотеки
 from random import choice
 import telebot as tb
