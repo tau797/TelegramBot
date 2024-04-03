@@ -8,6 +8,7 @@
 from random import choice
 import telebot as tb
 from telebot import types
+import shelve # для сохранения состояния бота (этапа диалога)
 
 # уникальный идентификатор бота - токен
 token = '6886566042:AAGlHIz56IneBdd-G_QKHTmlYZ2fOxBSBOA'
@@ -16,7 +17,7 @@ token = '6886566042:AAGlHIz56IneBdd-G_QKHTmlYZ2fOxBSBOA'
 FILE = "MyTODO.txt"
 
 #моё имя Андрей
-#hoz = 'Андрей'
+hoz = 'Андрей'
 
 #задаем признак тега
 tg = '#'
@@ -51,7 +52,6 @@ HELP = '''
 /help - эта  подсказка
 
 '''
-
 #При запуске
 @bot.message_handler(commands=['start'])
 def privet(message):
@@ -61,21 +61,41 @@ def privet(message):
     k3 = types.KeyboardButton('/все')
     markup.row(k1, k2, k3)
     bot.send_message(message.chat.id, f'<i>Приветствую, <b>{message.from_user.first_name}</b></i>',parse_mode='html',reply_markup=markup)
+    bot.send_message(message.chat.id, "Как Вас зовут? Чтобы узнать возможности, пиши /help")
+
+    chat_id = message.chat.id
+    storage = shelve.open('shelve')
+    storage[str(chat_id)] = 'privet'
+    storage.close()
 
     #add_todo('сегодня', 'изучить бота TAU!') # шутка
-    #xbnftv из файла что было
-    try: 
-           file = open(FILE, 'rt') 
-           sm = file.read()
-           todos = eval(sm) 
-           file.close() 
-    except: 
+
+    #читаем из файла что было
+    try:
+           file1 = open(FILE, 'rt')
+           sm = file1.read()
+           todos = eval(sm)
+           bot.send_message(message.chat.id, 'сегодня надо: '+str(todos['сегодня']))
+           file1.close()
+    except:
            print("Не могу открыть файл!")
+           bot.send_message(message.chat.id, 'Не могу открыть файл '+FILE)
     #todos['сегодня'] = 'изучить бота TAU!'
 
-#       bot.send_message(message.chat.id, "Как Вас зовут? Чтобы узнать возможности, пиши /help")
-#       if (hoz in message.text):
-#           bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
+@bot.message_handler(func=lambda mess: mess.content_type == 'text')
+def zdorov(message):
+    chat_id = message.chat.id
+    storage = shelve.open('shelve')
+    state = storage[str(chat_id)]
+    if state != 'privet':
+        pass
+        storage.close()
+    else:
+        #storage[str(chat_id)] = 'y'
+        #storage.close()
+        if (hoz in message.text):
+           bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
+
 
 
 # добавление задачи на дату
@@ -83,32 +103,31 @@ def add_todo(date, task):
     date = date.lower()
     if todos.get(date) is not None:
       if not task in todos[date]: #добавляем ежели не дубль
-        todos[date].append(task)        
+        todos[date].append(task)
       else:
         return f'Задача {task} уже была запланирована на {date}'
     else:
         todos[date] = [task]
+
     #и сохраняем перманентно
-    try: 
-           file = open(FILE, 'wt') 
-           file.write(str(todos)) 
-           file.close() 
-    except: 
+    try:
+           file = open(FILE, 'wt')
+           file.write(str(todos))
+           file.close()
+    except:
            print("Не могу дописать в файл!")
-    return f'Задача {task} запланирована на {date}'        
+    return f'Задача {task} запланирована на {date}'
 
 # добавляем реакцию бота на команду 'help'
 @bot.message_handler(commands=['help','помоги'])
 def help(message):
     bot.send_message(message.chat.id, HELP)
 
-
 # добавляем реакцию бота на команду 'random'
 @bot.message_handler(commands=['random'])
 def random(message):
     task = choice(RANDOM_TASKS)
     bot.send_message(message.chat.id, add_todo('сегодня', task))
-
 
 # добавляем реакцию бота на команду 'add'
 @bot.message_handler(commands=['add','еще','ещё'])
