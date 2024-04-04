@@ -52,6 +52,10 @@ HELP = '''
 /help - эта  подсказка
 
 '''
+
+#ПОРЯДОК ОБРАБОТЧИКОВ В ТЕКСТЕ ПРОГРАММЫ ВАЖЕН!!!
+ 
+
 #При запуске
 @bot.message_handler(commands=['start'])
 def privet(message):
@@ -61,41 +65,16 @@ def privet(message):
     k3 = types.KeyboardButton('/все')
     markup.row(k1, k2, k3)
     bot.send_message(message.chat.id, f'<i>Приветствую, <b>{message.from_user.first_name}</b></i>',parse_mode='html',reply_markup=markup)
-    bot.send_message(message.chat.id, "Как Вас зовут? Чтобы узнать возможности, пиши /help")
+    bot.send_message(message.chat.id, "Чтобы узнать возможности, пиши /help\nКак Вас зовут?")
+    if (hoz in message.text):
+           bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
 
     chat_id = message.chat.id
     storage = shelve.open('shelve')
-    storage[str(chat_id)] = 'privet'
+    storage[str(chat_id)] = 'zdorov'
     storage.close()
 
     #add_todo('сегодня', 'изучить бота TAU!') # шутка
-
-    #читаем из файла что было
-    try:
-           file1 = open(FILE, 'rt')
-           sm = file1.read()
-           todos = eval(sm)
-           bot.send_message(message.chat.id, 'сегодня надо: '+str(todos['сегодня']))
-           file1.close()
-    except:
-           print("Не могу открыть файл!")
-           bot.send_message(message.chat.id, 'Не могу открыть файл '+FILE)
-    #todos['сегодня'] = 'изучить бота TAU!'
-
-@bot.message_handler(func=lambda mess: mess.content_type == 'text')
-def zdorov(message):
-    chat_id = message.chat.id
-    storage = shelve.open('shelve')
-    state = storage[str(chat_id)]
-    if state != 'privet':
-        pass
-        storage.close()
-    else:
-        #storage[str(chat_id)] = 'y'
-        #storage.close()
-        if (hoz in message.text):
-           bot.send_message(message.chat.id, 'Здравствуй, Хозяин!')
-
 
 
 # добавление задачи на дату
@@ -108,7 +87,6 @@ def add_todo(date, task):
         return f'Задача {task} уже была запланирована на {date}'
     else:
         todos[date] = [task]
-
     #и сохраняем перманентно
     try:
            file = open(FILE, 'wt')
@@ -189,7 +167,27 @@ def show_(message):
               ll += str(date)+': '+str(el)+'\n'
       else:
         ll = 'Укажите вид задачи после '+tg
-
     bot.send_message(message.chat.id, ll)
+
+# @bot.message_handler(content_types=["text"])
+# def text(mess):
+#         bot.send_message(mess.chat.id, '>')
+#         if (hoz in mess.text):
+#            bot.send_message(mess.chat.id, 'Здравствуй, Хозяин!')
+
+@bot.message_handler(func=lambda mess: mess.content_type == 'text')
+def zdorov(mess):
+    chat_id = mess.chat.id
+    storage = shelve.open('shelve')
+    state = storage[str(chat_id)]
+    if state != 'zdorov':
+        pass
+        storage.close()
+    else:
+        #storage[str(chat_id)] = 'y'
+        storage.close()
+        #bot.send_message(mess.chat.id, '>')
+        if (hoz in mess.text):
+           bot.send_message(mess.chat.id, 'Здравствуй, Хозяин!')
 
 bot.polling(none_stop=True)
